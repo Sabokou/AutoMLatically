@@ -1,0 +1,17 @@
+.navbar-nav{
+    display: flex;
+    justify-content: center;
+}
+
+.collapse navbar-collapse col-md-3 {
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button{
+    display: flex;
+    justify-content: flex-end;
+    align-self: flex-end;
+}

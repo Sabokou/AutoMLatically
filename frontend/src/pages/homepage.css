@@ -1,0 +1,9 @@
+.content{
+    display: grid;
+}
+
+.select{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5vh;
+}
