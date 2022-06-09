@@ -1,13 +1,76 @@
-.navbar-nav{
+.navbar{
     display: flex;
-    justify-content: center;
+    width: 100%;
+    background-color: blue;
+    height: 10vh;
+    margin-bottom: 2vh;
+    justify-content: space-around;
+    flex-grow: 1
 }
 
-.collapse navbar-collapse col-md-3 {
-    align-self: center;
+.navList{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin: auto;
+    align-items: center;
+}
+
+.navLink{
+    display: flex;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    font-size: x-large;
+}
+
+.navLink:hover{
+    transition: 0.4s;
+    color: white;
+    border-radius: 0.3cm;
+    text-decoration: underline;
+}
+
+.navName{
+    display: flex;
+    color: white;
+    margin: 0;
+}
+
+.navItems{
+    display: flex;
+    font-weight: bold;
+    text-decoration: none;
+    justify-content: space-around;
+    color: white;
+    font-size: x-large;
+  }
+
+.fa-home{
+    margin-right: 5mm;
+    padding-top: 1mm;
+}
+/* .navbar-nav{
+    display: flex;
+    justify-content: center;
+    font-size: x-large;
+
+}
+
+.navbar-collapse col-md-3 {
     display: flex;
     justify-content: center;
     align-items: center;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;    
+
+}
+
+.navbar{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
 }
 
 .button{
@@ -15,3 +78,7 @@
     justify-content: flex-end;
     align-self: flex-end;
 }
+
+.navbar-brand{
+    font-size: x-larger;
+} */

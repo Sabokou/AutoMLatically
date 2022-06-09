@@ -1,6 +1,6 @@
 import './App.css';
 import Home from "./pages/homepage";
-import { BrowserRouter, Route ,Switch} from "react-router-dom";
+import { BrowserRouter, Routes, Route} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavbarBar from "./components/navbar";
 
@@ -11,9 +11,9 @@ function App() {
     <BrowserRouter>
       <NavbarBar/>
       {/* <Sidebar/> */}
-      <Switch>
-        <Route path="/" exact component={Home} />
-      </Switch>
+      <Routes>
+        <Route path="/" exact element={<Home/>} />
+      </Routes>
     </BrowserRouter>
   )};
   //   <div className="App">

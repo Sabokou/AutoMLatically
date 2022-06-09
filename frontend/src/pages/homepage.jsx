@@ -1,16 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./homepage.css";
+import { FileUploader } from "../components/fileUploader";
+
 
 function Home() {
   
   return (
     <div className="content">
-      <div className="select">
-        <button>Select dataset</button>
-        <button>Start training</button>
-      </div>
-
+      <FileUploader />
       <div>
         <Link to="/algorithms">
           <button className="homeAlgorithms">Algorithms</button>
