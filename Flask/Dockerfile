@@ -1,16 +1,18 @@
-# fetches Python image based on Slim
-FROM python:3.9-slim
+# fetches Python image based using the amd64 architecture, even if your system has an ARM CPU
+FROM --platform=linux/amd64 python:3.9
 
 # setup working directory
 WORKDIR /src
 
 # copy folder into working directory
-COPY ./Flask /src
+COPY ./src /src
 
-# install requirements
-COPY /Flask/requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+# install latest update of dependencies
+RUN apt-get update 
 
-EXPOSE 5000
+# install dependencies for the python code
+RUN pip install --no-cache-dir -r /src/requirements.txt
+
+EXPOSE 8001
 
 CMD ["python", "/src/run.py"]
