@@ -1,25 +1,28 @@
 services:
     backend:
         build:
-            context: ./Flask/
-        # volumes:
-        #     - ./Flask/src:/src
+            context: .
+            dockerfile: Flask/Dockerfile
+        volumes:
+            - ./Flask/src:/volume
         ports:
             - 8001:8001
 
     middleware:
         build:
-            context: ./middleware
-        # volumes:
-        #     - .:/app
+            context: .
+            dockerfile: ./middleware/Dockerfile
+        volumes:
+            - ./middleware:/volume
         ports:
             - 8000:8000
 
     frontend:
         build:
-            context: ./frontend/ # path to Dockerfile for frontend
-        # volumes:
-        #     - ./frontend/src:/app/src
+            context: .
+            dockerfile: ./frontend/Dockerfile 
+        volumes:
+            - ./frontend:/volume
         ports:
             - 3000:3000
         depends_on:
