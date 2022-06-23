@@ -1,10 +1,15 @@
 import pandas as pd
 import numpy as np
 import sklearn
+
+# regression
 from sklearn.linear_model import LinearRegression, SGDRegressor
 from sklearn.neural_network import MLPRegressor
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
+#classification
+from sklearn.svm import LinearSVC
 class ModelLoader:
     def __init__(self, models=None, task="regression") -> None:
         """ 
@@ -31,7 +36,7 @@ class ModelLoader:
         # list of models that are available for loading
         self._available_models = {
             "regression": ["linear_regression", "sgd_regressor", "mlp_regressor", "random_forest_regressor"],
-            "classification": []
+            "classification": ["linear_svc", "random_forest_classifier", "k_neighbors_classifier"]
             }
         self._task = task
         # model_dict will contain the name of the models as key and the model objects as values
@@ -55,7 +60,7 @@ class ModelLoader:
 
         # override the previous task if a task is provided
         if task is not None:
-            assert task in self._available_models.key(), "You have to select a valid task."
+            assert task in self._available_models.keys(), "You have to select a valid task."
             self._task = task
 
         # initilize the provided models or intilize all models if none are provided
@@ -70,6 +75,7 @@ class ModelLoader:
 
         # load all required ML models into the models_dict
         for name in self._model_names:
+            # regression
             if name in ["linear_regression", "linearregression"]:
                 self.models_dict["linear_regression"] = LinearRegression()
             if name in ["sgd_regressor", "sgdregressor"]:
@@ -78,5 +84,17 @@ class ModelLoader:
                 self.models_dict["mlp_regressor"] = MLPRegressor()
             if name in ["random_forest_regressor", "randomforestregressor"]:
                 self.models_dict["random_forest_regressor"] = RandomForestRegressor()
+            # classification
+            if name in ["linear_svc", "linearsvc"]: #linear support vector classification
+                self.models_dict["linear_svc"] = LinearSVC()
+            if name in ["random_forest_classifier", "randomforestclassifier"]:
+                self.models_dict["random_forest_classifier"] = RandomForestClassifier()
+            if name in ["k_neighbors_classifier", "kneighborsclassifier"]:
+                self.models_dict["k_neighbors_classifier"] = KNeighborsClassifier()
+
+            
+            
+                
+            
 
 
