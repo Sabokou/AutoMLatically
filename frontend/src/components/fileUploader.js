@@ -15,7 +15,7 @@ export const FileUploader = ({}) => {
     
     // axios library which serves as a middleware
     axios
-      .post("//localhost:8000/upload", data)
+      .post("//localhost:8001/upload", data)
       .then((e) => {
         console.log("Working");
       })

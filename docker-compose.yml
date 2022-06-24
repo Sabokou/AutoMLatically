@@ -8,14 +8,14 @@ services:
         ports:
             - 8001:8001
 
-    middleware:
-        build:
-            context: .
-            dockerfile: ./middleware/Dockerfile
-        volumes:
-            - ./middleware:/volume
-        ports:
-            - 8000:8000
+    # middleware:
+    #     build:
+    #         context: .
+    #         dockerfile: ./middleware/Dockerfile
+    #     volumes:
+    #         - ./middleware:/volume
+    #     ports:
+    #         - 8000:8000
 
     frontend:
         build:
@@ -25,5 +25,5 @@ services:
             - ./frontend:/volume
         ports:
             - 3000:3000
-        depends_on:
-            - "backend"
+        # depends_on:
+        #     - "middleware"
