@@ -54,7 +54,7 @@ class ModelLoader:
             return
         
 
-    def load(self, model_names=None, task=None):
+    def load(self, model_names=None, task=None) -> None:
         # reset previous model_dict to load new models
         self.models_dict = {}
 
@@ -92,8 +92,24 @@ class ModelLoader:
             if name in ["k_neighbors_classifier", "kneighborsclassifier"]:
                 self.models_dict["k_neighbors_classifier"] = KNeighborsClassifier()
 
-            
-            
+    def fit(self, X, y) -> None:
+        """Fit the taining data X and the respective gold labels y to train all selected models in the ModelLoader."""
+        for model in self.models_dict.keys():
+            self.models_dict[model] = self.models_dict[model].fit(X, y)
+
+    def predict(self, X) -> dict:
+        """Use all loaded models in the ModelLoader to make predictions for the test data X.
+        
+        Returns:
+        ---
+        : predictions (dict) : Dictionary with the model names as keys and respective predictions as values 
+        """
+        # initilize a dictionary with the model names and an empty list that is filled with the predictions
+        predictions = {}
+        for model in self.models_dict.keys():
+            predictions[model] = self.models_dict[model].predict(X)
+        return predictions
+
                 
             
 
