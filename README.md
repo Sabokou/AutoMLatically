@@ -69,3 +69,16 @@ The members of project team are:
 - Canberk Alkan
 - Dominic Viola
 - Phillip Lange
+
+---
+### 4. Backend API Docs
+
+List of Endpoints:
+
+/upload (POST) -> send the CSV data file from the frontend to the backend. Input: -
+
+/start (POST) -> intitiate the training process of the selected models. Input: selected_models, gold_label
+
+/performance (GET) -> receive the performance metrics from the training process in a JSON format. Input: -
+
+/model-names (GET) -> Receive the names of the available models and if they are regression or classification models. Input: -
