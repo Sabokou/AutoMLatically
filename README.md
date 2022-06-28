@@ -24,7 +24,6 @@ Backend that provides the following:
     - Request to download specific trained Models
 - The API sends the following requests back to the frontend:
     - The requested Model data
-    - The progress or completion of the training process
     - The performance measures of the ML models
 - Logic to preprocess the dataset
 - Logic to create and train selected ML models
