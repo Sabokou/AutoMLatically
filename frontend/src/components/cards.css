@@ -1,0 +1,190 @@
+.cardLayout{
+    margin-top: 100px;
+    display: grid;
+    grid-column-gap: 1em;
+    grid-template-columns: repeat(3, 1fr);
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.box4{
+    margin-top:50px;
+    grid-column: 1/4;
+    width: 100%;
+    height: 400px
+;}
+
+.cardContainer{
+    background-color: #0D6EFD;
+    border-color: red;
+ 
+    border-radius: 30px;
+}
+
+.header1{
+    display: flex;
+    font-size:x-large;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+/* Hide default HTML checkbox */
+.switch input {
+ opacity: 0;
+width: 0;
+height: 0;
+  }
+  
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+input:checked + .slider {
+    background-color: red;
+  }
+  
+input:focus + .slider {
+    box-shadow: 0 0 1px red;
+  }
+  
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+  }
+  
+.slider.round:before {
+    border-radius: 50%;
+  }
+
+.box2{
+      display: flex;
+      justify-content: space-around;
+  }
+
+.switchBox{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+  }
+
+.switchHeader{
+    font-size: x-large;
+    color: white;
+    font-weight: bold;
+}
+
+.box3{
+    display: flex;
+    justify-content: space-around;
+}
+
+.switchBox3{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+  }
+
+
+.header3{
+    display: flex;
+    font-size:x-large;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    height: auto;
+  }
+
+  .button {
+    display: inline-block;
+    border-radius: 30px;
+    background-color: white;
+    font-weight: bolder;
+    font-size: x-large;
+    border: none;
+    color: black;
+    text-align: center;
+    font-size: 28px;
+    padding: 20px;
+    width: 200px;
+    transition: all 0.5s;
+    cursor: pointer;
+    padding: 5px;
+    margin-bottom: 1cm;
+  }
+  
+  .button span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.2s;
+  }
+  
+  .button span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+
+
+  }
+
+  /* .button:hover{
+      background-color: red;
+      color: white;
+
+  } */
+  
+  .button:hover span {
+    padding-right: 25px;
+  }
+  
+  .button:hover span:after {
+    opacity: 1;
+    right: 0;
+  }
+
+  .button:active{
+      background-color: red;
+      transition: -1s;
+  }
+
+  

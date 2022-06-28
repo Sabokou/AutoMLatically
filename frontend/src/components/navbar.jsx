@@ -66,7 +66,6 @@ const NavbarBar = (props) => {
           </li>
         </ul>
       </div>
-      <button className="upload">Upload</button>
     </nav>
   );
 }
