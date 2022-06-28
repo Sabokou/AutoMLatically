@@ -32,6 +32,7 @@ export const FileUploader = ({}) => {
         type="file"
         onChange={onInputChange}
         multiple=""
+        accept=".csv"
       />
       <button className="btn btn-outline-primary">Upload</button>
     </form>
