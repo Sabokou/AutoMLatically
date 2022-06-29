@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 
-function CsvPreview(file, setCsvColumns, setCsvRows) {
+function CsvLoader(file, setCsvColumns, setCsvRows) {
 
     const loadCsvHeaders = (column_names) => {
       console.log('column_names', column_names)
@@ -18,6 +18,7 @@ function CsvPreview(file, setCsvColumns, setCsvRows) {
         dynamicTyping: true,
         skipEmptyLines: true,
         preview: 100, // only load 100 rows of the csv file
+        // maybe convert the headers ? -> but they would not be the same as the ones that are received in the backend
         // transformHeader: (header) =>
         //   header
         //     .toLowerCase()
@@ -34,14 +35,6 @@ function CsvPreview(file, setCsvColumns, setCsvRows) {
       }
     console.log("starting the parse");
     Papa.parse(file, papaparseOptions)
-    
-
-
-//   return (
-//     <div>
-        
-//     </div>
-//   )
 }
 
-export default CsvPreview
+export default CsvLoader
