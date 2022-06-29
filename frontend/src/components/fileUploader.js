@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import CsvPreview from "./CsvLoader"
 
-export const FileUploader = ({}) => {
-  const [file, setFile] = useState(null);
+export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
+  const [file, setFile] = useState();
   const onInputChange = (e) => {
     console.log(e.target.files);
+    CsvPreview(e.target.files[0], setCsvColumns, setCsvRows);
     setFile(e.target.files[0]);
   };
   const onSubmit = (e) => {
