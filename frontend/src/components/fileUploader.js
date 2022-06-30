@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import CsvLoader from "./CsvLoader"
+import CsvLoader from "./CsvLoader";
 
 export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
   const [file, setFile] = useState();
@@ -14,7 +14,7 @@ export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
 
     const data = new FormData();
     data.append("file", file);
-    
+
     // axios library which serves as a middleware
     axios
       .post("//localhost:8001/upload", data)
@@ -36,7 +36,7 @@ export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
         multiple=""
         accept=".csv"
       />
-      <button className="btn btn-outline-primary">Upload</button>
+      {/* <button className="btn btn-light btn-outline-primary">Upload</button> */}
     </form>
   );
 };
