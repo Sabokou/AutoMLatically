@@ -1,0 +1,25 @@
+# Testing the upload functionality
+
+POST http://localhost:8001/upload HTTP/1.1
+content-type: application/json
+
+{
+    "file": "sample"
+}
+
+###
+# Testing the GET model names 
+
+GET http://localhost:8001/model-names HTTP/1.1
+
+###
+# test selecting model names 
+
+POST http://localhost:8001/start HTTP/1.1
+content-type: application/json
+
+{
+    "modelType": "classification",
+    "modelNames": ["nlpregressor", "kmeans"],
+    "goldLabel": "col1"
+}

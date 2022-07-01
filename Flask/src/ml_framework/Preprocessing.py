@@ -14,8 +14,10 @@ from sklearn.model_selection import train_test_split
 
 class Preprocessing:
     def __init__(self, data_path=None):
-        if data_path is None:
-            data_path = "../public/datafile.csv"
+        if data_path is not None:
+            self.read_csv(data_path)
+
+    def read_csv(self, data_path):
         self.df = pd.read_csv(data_path)
 
     def train_test_splitter(self, df, y_name, test_size=0.2):

@@ -21,7 +21,7 @@ class ModelLoader:
 
         Methods:
         ---
-        .getAvailable() -> Returns all available model names for a given task (regression or classification)
+        .get_available() -> Returns all available model names for a given task (regression or classification)
         
         .load() -> loads all provided model names into the self._model_objects variable
 
@@ -50,8 +50,17 @@ class ModelLoader:
         self.mae = {}
         self.load(models)
 
-    def getAvailable(self, task):
-        """Returns a list of the available ML models, that can be loaded via ModelLoader.load()"""
+    def get_available(self, task=None):
+        """
+        Returns a list of the available ML models, that can be loaded via ModelLoader.load()
+        The structure is:
+        {"classification": [<list of classification model names>],
+        "regression": [<list of regression model names>]}
+
+        If you provide a task (classification/regression) only a list of the available models in that task are returned.
+        """
+        if task is None:
+            return self._available_models
         try:
             avail = self._available_models[task]
             return avail

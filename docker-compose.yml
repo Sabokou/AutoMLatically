@@ -5,6 +5,7 @@ services:
             dockerfile: Flask/Dockerfile
         volumes:
             - ./Flask/src:/volume
+            - ./Flask/src/uploaded_file:/uploaded_file
         ports:
             - 8001:8001
 
