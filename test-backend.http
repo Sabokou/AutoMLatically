@@ -23,3 +23,10 @@ content-type: application/json
     "modelNames": ["nlpregressor", "kmeans"],
     "goldLabel": "col1"
 }
+
+###
+GET http://localhost:8001/download HTTP/1.1
+
+{
+    "model": "test"
+}

@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask_cors import CORS
 import logging
 import os
@@ -6,7 +6,8 @@ import json
 
 PORT = 8001
 # save the uploaded file into this directory inside the container
-BASE_DIR = "/uploaded_file"
+UPLOAD_DIR = "/uploaded_file"
+DOWNLOAD_DIR = "/trained_models"
 
 # ML Framework 
 from ml_framework.ModelLoader import ModelLoader
@@ -30,7 +31,7 @@ def hello_world():
 @app.route("/upload", methods=['POST'])
 def upload_file():
     if request.method == 'POST' and request.files:
-        data_dir = os.path.join(BASE_DIR, "data.csv")
+        data_dir = os.path.join(UPLOAD_DIR, "data.csv")
         f = request.files['file']
         app.logger.info(f"Saving file {f}")
         f.save(data_dir)
@@ -71,6 +72,35 @@ def get_model_names():
         avail_models = loader.get_available()
         content = json.dumps(avail_models)
         return f"Available ml-models are: {content}"
-        
+
+@app.route("/download", methods=['GET'])
+def get_trained_models():
+    if request.method == 'GET':
+        requested_model = None
+        try:
+            content = json.loads(request.data)
+            app.logger.info(f"You want to GET model {content}")
+            requested_model = content["model"]
+            app.logger.info(f"You want to request the model {requested_model}")
+        except:
+            return "The request is maleformed, make sure to format like this: { 'model': <model_name> }"
+
+        # search through the download dir for the requested saved model
+        is_dir = os.path.exists(DOWNLOAD_DIR)
+        app.logger.info(f"start walk, It is a dir: {is_dir}")
+        if not is_dir:
+            return f"Since the server container doesn't contain the folder '{DOWNLOAD_DIR}', there are no saved trained models, yet."
+
+        for root, dirs, files in os.walk(DOWNLOAD_DIR):
+            app.logger.info(f"Searching through files: {files}")
+            for file in files:
+                if file.startswith(requested_model):
+                    app.logger.info(f"checking file {file}")
+                    model_path = os.path.join(root, file)
+                    app.logger.info(model_path)
+                    return send_file(model_path, as_attachment=True)
+            return "Did not find the selected model"
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=PORT)

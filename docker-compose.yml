@@ -6,6 +6,7 @@ services:
         volumes:
             - ./Flask/src:/volume
             - ./Flask/src/uploaded_file:/uploaded_file
+            - ./Flask/src/trained_models:/trained_models
         ports:
             - 8001:8001
 

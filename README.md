@@ -77,8 +77,12 @@ List of Endpoints:
 
 /upload (POST) -> send the CSV data file from the frontend to the backend. Input: -
 
-/start (POST) -> intitiate the training process of the selected models. Input: selected_models, gold_label
+/start (POST) -> intitiate the training process of the selected models. Input: {selected_models: [model_names], gold_label: "label"}
 
 /performance (GET) -> receive the performance metrics from the training process in a JSON format. Input: -
 
 /model-names (GET) -> Receive the names of the available models and if they are regression or classification models. Input: -
+
+/download (GET) -> download the specified trained ML model from the backend and send them to the frontend. Input: {model_name: e.g. "linear_regression" or "best"}
+
+Backend internal naming convention for trained ML model files: "ranking_nameOfModel" for example: "0_linear_regression" if the linear regression is the best (0) model performance
