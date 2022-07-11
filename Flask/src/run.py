@@ -71,7 +71,7 @@ def get_model_names():
         app.logger.info(f"You want to GET the /model-names")
         avail_models = loader.get_available()
         content = json.dumps(avail_models)
-        return f"Available ml-models are: {content}"
+        return content
 
 @app.route("/download", methods=['GET'])
 def get_trained_models():

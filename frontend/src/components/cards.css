@@ -43,6 +43,8 @@
     display: inline-block;
     width: 60px;
     height: 34px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
   
 /* Hide default HTML checkbox */
@@ -60,7 +62,7 @@ height: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: rgb(201, 232, 0);
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -78,11 +80,11 @@ height: 0;
   }
   
 input:checked + .slider {
-    background-color: red;
+    background-color: rgb(247, 91, 0);
   }
   
 input:focus + .slider {
-    box-shadow: 0 0 1px red;
+    box-shadow: 0 0 1px rgb(247, 91, 0);
   }
   
 input:checked + .slider:before {
@@ -102,12 +104,14 @@ input:checked + .slider:before {
 
 .box2{
       display: flex;
+      flex-direction: column;
       justify-content: space-around;
+      align-items: center;
   }
 
 .switchBox{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-self: center;
     align-items: center;
   }

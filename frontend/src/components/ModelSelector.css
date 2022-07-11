@@ -1,0 +1,13 @@
+.check-list {
+    color: white;
+}
+
+.model-selector-title {
+    font-size: x-large;
+}
+
+.list-container input {
+    margin-right: 8px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
