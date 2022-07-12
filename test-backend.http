@@ -30,3 +30,6 @@ GET http://localhost:8001/download HTTP/1.1
 {
     "model": "test"
 }
+
+###
+DELETE http://localhost:8001/download HTTP/1.1

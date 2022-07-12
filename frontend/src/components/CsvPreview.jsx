@@ -18,6 +18,8 @@ function Table({ columns, data }) {
   
     // Render the UI for the bootstrap table according to this tutorial: https://codesandbox.io/s/o1pt2?file=/src/App.js
     return (
+      <div>
+        <div>Preview of up to 100 rows of the dataset:</div>
       <BTable striped bordered hover size="sm" {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
@@ -41,6 +43,7 @@ function Table({ columns, data }) {
           })}
         </tbody>
       </BTable>
+      </div>
     )
   }
 

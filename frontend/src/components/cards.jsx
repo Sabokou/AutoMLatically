@@ -3,14 +3,16 @@ import "./cards.css";
 import axios from "axios";
 import CsvLoader from "./CsvLoader";
 import { useState } from "react";
-import Selector from "./selector";
+import Selector from "./LabelSelector";
 import { FileUploader } from "./fileUploader";
 import CsvPreview from "./CsvPreview";
 import ModelSelector from "./ModelSelector";
 import RequestModels from "./RequestModels";
 
 export default function Cards(props) {
-  const [click, setClick] = useState(true);
+  const backendUrl = "http://localhost:8001"
+
+  const [goldLabel, setGoldLabel] = useState();
   const [csvColumns, setCsvColumns] = useState();
   const [csvRows, setCsvRows] = useState();
   const [mlKind, setMlKind] = useState("classification")
@@ -18,6 +20,7 @@ export default function Cards(props) {
   // maps the state of the regression/classification switch to the respective string
   const mlKindMap = { true: "regression", false: "classification" }
 
+  // request the available ML models and the respective kind (regression/classification) from the backend
   var availModels = RequestModels()
 
   // switch between the classification and regression model if the Switch is activated
@@ -31,6 +34,33 @@ export default function Cards(props) {
     console.log('selectedModels', selectedModels)
   }
 
+  /*
+  - delete /download ML files from previous run
+  - post /start upload selected ML models and gold label
+
+  TODO: Process the callback, after the training is successfull -> request the performance metrics and display them
+  */ 
+  const startTraining = () => {
+    console.log('selectedModels', selectedModels)
+    console.log('goldLabel', goldLabel)
+    //start the training if at leased one model is selected and the gold label is set
+    if ( !(selectedModels.length === 0) && goldLabel ) {
+      var trainingParams = {selectedModels: selectedModels, gold_label: goldLabel}
+
+      // requests to the backend
+      const deletePrevModels = axios.delete(`${backendUrl}/download`)
+      const training = axios.post(`${backendUrl}/start`, trainingParams)
+      
+      // sending both requests 
+      deletePrevModels.then((cb) => {
+        console.log('callback of the deletion step', cb)
+        })
+      
+      training.then( (cb) => {
+        console.log('cb of the training process', cb)
+      })
+    }
+  }
 
   return (
     <div className="cardLayout">
@@ -47,7 +77,7 @@ export default function Cards(props) {
       </div>
       <div className="cardContainer box12">
         <p className="cardContainer header1"> Gold Label Selection</p>
-        <Selector csvColumns={csvColumns} csvRows={csvRows} />
+        <Selector csvColumns={csvColumns} csvRows={csvRows} setGoldLabel={setGoldLabel}/>
       </div>
 
       <div className="cardContainer box2">
@@ -64,7 +94,7 @@ export default function Cards(props) {
       <div className="cardContainer box3">
         <div className="switchBox3">
           <p className="cardContainer header3">Start Training</p>
-          <button className="button" onSubmit={() => setClick(!click)}>
+          <button className="button" onClick={() => startTraining()}>
             <span>Go!</span>
           </button>
         </div>

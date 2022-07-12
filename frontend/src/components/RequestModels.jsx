@@ -1,6 +1,8 @@
 import axios from "axios"
 
 export default function RequestModels() {
+    const backendUrl = "http://localhost:8001"
+
     // axios library which serves as a middleware
     // get all available ml models from the backend 
     // if the data is not present already
@@ -11,7 +13,7 @@ export default function RequestModels() {
     if (!(localStorage.getItem(storageName))) {
         console.log('localstorage is empty and will be filled')
         axios
-            .get("http://localhost:8001/model-names")
+            .get(`${backendUrl}/model-names`)
             .then((e) => {
                 // if successfull, save the response data to the state or localstorage
                 console.log("Received event:", e);
