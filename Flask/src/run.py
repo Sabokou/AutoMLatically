@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, Response
 from flask_cors import CORS
 import logging
 import os
@@ -22,6 +22,10 @@ CORS(app)
 # config
 app.config['UPLOAD_FOLDER'] = "."
 
+# Responses
+def suc(message):
+    return Response(message, status=200)
+
 
 @app.route('/')
 def hello_world():
@@ -36,7 +40,7 @@ def upload_file():
         app.logger.info(f"Saving file {f}")
         f.save(data_dir)
         prepro.read_csv(data_dir)
-    return 'file uploaded successfully'
+    return suc('file uploaded successfully')
 
 @app.route("/start", methods=['POST'])
 def start_training():
@@ -52,7 +56,7 @@ def start_training():
 
         content = json.loads(request.data)
         app.logger.info(f"You posted the following /start parameters: {content}")
-        return f"You requested /start with the content: {content}"
+        return suc(f"You requested /start with the content: {content}")
 
 @app.route("/performance", methods=['GET'])
 def get_performance():
@@ -63,7 +67,7 @@ def get_performance():
 
         app.logger.info(f"You want to GET the /performance parameters")
         content = json.dumps({"nlpregressor": "0.1234"})
-        return f"Your dummy performance is: {content}"
+        return suc(f"Your dummy performance is: {content}")
 
 @app.route("/model-names", methods=['GET'])
 def get_model_names():
@@ -71,9 +75,9 @@ def get_model_names():
         app.logger.info(f"You want to GET the /model-names")
         avail_models = loader.get_available()
         content = json.dumps(avail_models)
-        return content
+        return suc(content)
 
-@app.route("/download", methods=['GET'])
+@app.route("/download", methods=['GET', 'DELETE'])
 def get_trained_models():
     if request.method == 'GET':
         requested_model = None
@@ -100,6 +104,22 @@ def get_trained_models():
                     app.logger.info(model_path)
                     return send_file(model_path, as_attachment=True)
             return "Did not find the selected model"
+    
+    # remove all previously stored trained models 
+    elif request.method == 'DELETE':
+        if os.path.exists(DOWNLOAD_DIR):
+            # might fail if the folder exists but is empty
+            try:
+                for root, dirs, files in os.walk(DOWNLOAD_DIR):
+                    for file in files:
+                        os.remove(os.path.join(root, file))
+                return suc("Folder content deleted")
+            except:
+                return suc("Folder already empty")
+        # create the folder if it doesn't exist
+        else:
+            os.mkdir(DOWNLOAD_DIR)
+            return suc("Folder is created and empty")
 
 
 if __name__ == '__main__':
