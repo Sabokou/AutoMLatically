@@ -34,6 +34,8 @@ def hello_world():
 
 @app.route("/upload", methods=['POST'])
 def upload_file():
+    app.logger.info(request.method)
+    app.logger.info(request.files)
     if request.method == 'POST' and request.files:
         data_dir = os.path.join(UPLOAD_DIR, "data.csv")
         f = request.files['file']
@@ -45,18 +47,27 @@ def upload_file():
 @app.route("/start", methods=['POST'])
 def start_training():
     if request.method == 'POST':
+        app.logger.info(os.listdir(UPLOAD_DIR))
         # TODO: load the selected models
+        trainingparams = request.get_json()
+        models=trainingparams['selectedModels']
+        goldLabel=trainingparams['gold_label']
+        app.logger.info(f"These are the models: {models}")
+        app.logger.info(f"This is the goldlable: {goldLabel}")
 
         # preprocess data
         lin_data = prepro.linear_preprocessing()
-        (X_train, X_test, y_train, y_test) = prepro.train_test_splitter(lin_data, y_name="Salary")
+        (X_train, X_test, y_train, y_test) = prepro.train_test_splitter(lin_data, y_name=goldLabel)
         
-        # TODO: fit data to all models
+        # TODO: load, fit, predict data to all models
+        loader.load(model_names=models)
+        loader.fit(X_train, y_train)
+        loader.predict(X_test, y_test)
 
 
-        content = json.loads(request.data)
-        app.logger.info(f"You posted the following /start parameters: {content}")
-        return suc(f"You requested /start with the content: {content}")
+        #content = json.loads(request.data)
+        #app.logger.info(f"You posted the following /start parameters: {content}")
+        #return suc(f"You requested /start with the content: {content}")
 
 @app.route("/performance", methods=['GET'])
 def get_performance():
