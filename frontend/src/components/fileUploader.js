@@ -8,12 +8,11 @@ export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
     console.log(e.target.files);
     CsvLoader(e.target.files[0], setCsvColumns, setCsvRows);
     setFile(e.target.files[0]);
-    // upload the file when it is selected without using an upload button
-    submit()
   };
-  const submit = () => {
-    //e.preventDefault();
-
+  const submit = (e) => {
+    e.preventDefault();
+    
+    console.log('file', file)
     const data = new FormData();
     data.append("file", file);
 
@@ -38,7 +37,7 @@ export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
         multiple=""
         accept=".csv"
       />
-      {/* <button className="btn btn-light btn-outline-primary">Upload</button> */}
+      <button className="btn btn-light btn-outline-primary">Upload</button>
     </form>
   );
 };
