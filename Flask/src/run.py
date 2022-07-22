@@ -12,15 +12,16 @@ DOWNLOAD_DIR = "/trained_models"
 # ML Framework 
 from ml_framework.ModelLoader import ModelLoader
 from ml_framework.Preprocessing import Preprocessing
+
 loader = ModelLoader()
 prepro = Preprocessing()
-
 
 app = Flask(__name__)
 CORS(app)
 
 # config
 app.config['UPLOAD_FOLDER'] = "."
+
 
 # Responses
 def suc(message):
@@ -44,41 +45,46 @@ def upload_file():
         prepro.read_csv(data_dir)
     return suc('file uploaded successfully')
 
+
 @app.route("/start", methods=['POST'])
 def start_training():
     if request.method == 'POST':
         app.logger.info(os.listdir(UPLOAD_DIR))
         # TODO: load the selected models
         trainingparams = request.get_json()
-        models=trainingparams['selectedModels']
-        goldLabel=trainingparams['gold_label']
+        models = trainingparams['selectedModels']
+        goldLabel = trainingparams['gold_label']
         app.logger.info(f"These are the models: {models}")
         app.logger.info(f"This is the goldlable: {goldLabel}")
 
         # preprocess data
-        lin_data = prepro.linear_preprocessing()
-        (X_train, X_test, y_train, y_test) = prepro.train_test_splitter(lin_data, y_name=goldLabel)
-        
-        # TODO: load, fit, predict data to all models
+        # lin_data = prepro.linear_preprocessing()
+        (X_train, X_test, y_train, y_test) = prepro.train_test_splitter(prepro.df, y_name=goldLabel)
+
         loader.load(model_names=models)
         loader.fit(X_train, y_train)
         loader.predict(X_test, y_test)
 
+        # get best Model for hyperparameter tuning
 
-        #content = json.loads(request.data)
-        #app.logger.info(f"You posted the following /start parameters: {content}")
-        #return suc(f"You requested /start with the content: {content}")
+
+        # content = json.loads(request.data)
+        app.logger.info(f"You posted the following /start parameters: {content}")
+        return suc(f"Training has been completed")
+
 
 @app.route("/performance", methods=['GET'])
 def get_performance():
     if request.method == 'GET':
-        # TODO: calculate the performance using the training dataset
-        #prediction_dict = loader.predict(X_test, y=y_test)
-        #mae = loader.mae
 
-        app.logger.info(f"You want to GET the /performance parameters")
+        # Current performance values (mean absolute error) are stored in loader's mae attribute
+        mae = loader.mae
+
+        app.logger.info(f"You want to GET the /performance parameters\n. Current values:\n{mae}")
         content = json.dumps({"nlpregressor": "0.1234"})
-        return suc(f"Your dummy performance is: {content}")
+        return mae
+        # return suc(f"Your dummy performance is: {content}")
+
 
 @app.route("/model-names", methods=['GET'])
 def get_model_names():
@@ -87,6 +93,7 @@ def get_model_names():
         avail_models = loader.get_available()
         content = json.dumps(avail_models)
         return suc(content)
+
 
 @app.route("/download", methods=['GET', 'DELETE'])
 def get_trained_models():
@@ -115,7 +122,7 @@ def get_trained_models():
                     app.logger.info(model_path)
                     return send_file(model_path, as_attachment=True)
             return "Did not find the selected model"
-    
+
     # remove all previously stored trained models 
     elif request.method == 'DELETE':
         if os.path.exists(DOWNLOAD_DIR):

@@ -6,9 +6,13 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.ensemble import RandomForestRegressor
 
 # classification
+from sklearn.pipeline import make_pipeline
 from sklearn.svm import LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
+
+# Pipeline builder
+from ml_framework.Preprocessing import Preprocessing
 
 
 class ModelLoader:
@@ -38,6 +42,8 @@ class ModelLoader:
         : task (str) : The name of the task that should be performed. 
         Possible options are: regression and classification
         """
+        self.pipeline_builder = Preprocessing()
+
         # list of models that are available for loading
         self._available_models = {
             "regression": ["linear_regression", "sgd_regressor", "mlp_regressor", "random_forest_regressor"],
@@ -50,7 +56,7 @@ class ModelLoader:
         self.mae = {}
         self.load(models)
 
-    def get_available(self, task=None):
+    def get_available(self, task: str = None):
         """
         Returns a list of the available ML models, that can be loaded via ModelLoader.load()
         The structure is:
@@ -87,24 +93,34 @@ class ModelLoader:
             # use all models for the selected task
             self._model_names = self._available_models[self._task]
 
+        # get preprocessing variations
+        linear_preprocessor = Preprocessing.linear_preprocessing()
+        tree_preprocessor = Preprocessing.tree_preprocessing()
+
         # load all required ML models into the models_dict
         for name in self._model_names:
             # regression
             if name in ["linear_regression", "linearregression"]:
-                self.models_dict["linear_regression"] = LinearRegression()
+                self.models_dict["linear_regression"] = make_pipeline(
+                    linear_preprocessor, LinearRegression())
             if name in ["sgd_regressor", "sgdregressor"]:
-                self.models_dict["sgd_regressor"] = SGDRegressor()
+                self.models_dict["sgd_regressor"] = make_pipeline(
+                   linear_preprocessor, SGDRegressor())
             if name in ["mlp_regressor", "mlpregressor"]:
-                self.models_dict["mlp_regressor"] = MLPRegressor()
+                self.models_dict["mlp_regressor"] = make_pipeline(
+                   linear_preprocessor, MLPRegressor())
             if name in ["random_forest_regressor", "randomforestregressor"]:
-                self.models_dict["random_forest_regressor"] = RandomForestRegressor()
+                self.models_dict["random_forest_regressor"] = make_pipeline(
+                   tree_preprocessor, RandomForestRegressor())
             # classification
             if name in ["linear_svc", "linearsvc"]:  # linear support vector classification
-                self.models_dict["linear_svc"] = LinearSVC()
+                self.models_dict["linear_svc"] = make_pipeline(linear_preprocessor, LinearSVC())
             if name in ["random_forest_classifier", "randomforestclassifier"]:
-                self.models_dict["random_forest_classifier"] = RandomForestClassifier()
+                self.models_dict["random_forest_classifier"] = make_pipeline(
+                   tree_preprocessor, RandomForestClassifier())
             if name in ["k_neighbors_classifier", "kneighborsclassifier"]:
-                self.models_dict["k_neighbors_classifier"] = KNeighborsClassifier()
+                self.models_dict["k_neighbors_classifier"] = make_pipeline(
+                   linear_preprocessor, KNeighborsClassifier())
 
     def fit(self, X, y) -> None:
         """Fit the training data X and the respective gold labels y to train all selected models in the ModelLoader."""
@@ -112,6 +128,7 @@ class ModelLoader:
             self.models_dict[model] = self.models_dict[model].fit(X, y)
 
     @staticmethod
+    @np.vectorize
     def _calc_mae(y, pred):
         y, pred = np.array(y), np.array(pred)
         abs = np.abs(y - pred)
@@ -144,8 +161,8 @@ class ModelLoader:
             predictions[model] = self.models_dict[model].predict(X)
 
         if y is not None:
-            for m, pred in predictions.items():
-                self.mae[m] = self._calc_mae(y, pred)
+            for model, prediction in predictions.items():
+                self.mae[model] = self._calc_mae(y, prediction)
             self.select_best_model()
 
         return predictions
