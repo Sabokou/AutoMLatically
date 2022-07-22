@@ -1,5 +1,7 @@
 DIR=/volume
-if test -d "$DIR"; then
+# shellcheck disable=SC1072
+if test -d "$DIR"
+then
     export BASE_DIR=/volume
     echo volume mount detected:
 else
