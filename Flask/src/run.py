@@ -12,9 +12,11 @@ DOWNLOAD_DIR = "/trained_models"
 # ML Framework 
 from ml_framework.ModelLoader import ModelLoader
 from ml_framework.Preprocessing import Preprocessing
+from ml_framework.ModelOptimizer import ModelOptimizer
 
 loader = ModelLoader()
 prepro = Preprocessing()
+optimizer = ModelOptimizer()
 
 app = Flask(__name__)
 CORS(app)
@@ -66,10 +68,14 @@ def start_training():
         loader.predict(X_test, y_test)
 
         # get best Model for hyperparameter tuning
-
+        app.logger.info(f"Initial fits have ended. Optimizing best model now.")
+        tuned_model = optimizer.hyperparameter_optimize_single(model_name=list(loader.best_model.keys())[0],
+                                                               model=list(loader.best_model.values())[0],
+                                                               X=X,
+                                                               y=y)
 
         # content = json.loads(request.data)
-        app.logger.info(f"You posted the following /start parameters: {content}")
+        app.logger.info(f"{tuned_model}")
         return suc(f"Training has been completed")
 
 
@@ -82,7 +88,7 @@ def get_performance():
 
         app.logger.info(f"You want to GET the /performance parameters\n. Current values:\n{mae}")
         content = json.dumps({"nlpregressor": "0.1234"})
-        return mae
+        return suc(mae)
         # return suc(f"Your dummy performance is: {content}")
 
 
@@ -92,6 +98,7 @@ def get_model_names():
         app.logger.info(f"You want to GET the /model-names")
         avail_models = loader.get_available()
         content = json.dumps(avail_models)
+        app.logger.info("Content", content)
         return suc(content)
 
 

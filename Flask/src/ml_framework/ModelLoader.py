@@ -42,6 +42,7 @@ class ModelLoader:
         : task (str) : The name of the task that should be performed. 
         Possible options are: regression and classification
         """
+        self.best_model = None
         self.pipeline_builder = Preprocessing()
 
         # list of models that are available for loading
@@ -145,7 +146,7 @@ class ModelLoader:
                 currently_best_perf = item[1]
                 currently_best_model = item[0]
 
-        self.best_model = self.models_dict[currently_best_model]
+        self.best_model = {currently_best_model:self.models_dict[currently_best_model]}
 
     def predict(self, X, y=None) -> dict:
         """Use all loaded models in the ModelLoader to make predictions for the test data X.
