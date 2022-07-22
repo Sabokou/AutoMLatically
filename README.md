@@ -1,5 +1,7 @@
 # AutoMLatically
 
+![Architecture](./docs/Architecture.png)
+
 This project is concerned with the implementation of a Auto Machine Learning (AutoML) framework. 
 The software has a user-facing frontent (React Website) and a ML performing backend (Flask API server).
 
@@ -30,6 +32,20 @@ Backend that provides the following:
 - Logic to calculate performance measures
 - Logic to tune the hyperparameters of the models
 - Logic to store trained models, so that they can be send to the frontend if requested
+
+These requirements were used to create paper prototypes for the frontend UI.
+
+**Initial Prototype for Homepage:**
+![Initial-Homepage](./docs/page_layout-Hauptseite.drawio.png)
+
+**Initial Protoype for Upload Page:**
+![Initial-upload-page](./docs/page_layout-Upload-Page.drawio.png)
+
+During the development a reworked and improved Protype was developed. That was composed of a single page.
+
+**Reworked Homepage:**
+![Reworked-Homepage](./docs/page_layout-Reworked-Homepage.drawio.png)
+
 ---
 
 ### 2. Setup
@@ -59,6 +75,17 @@ Replace <service-name> with one of the following:
 - middleware
 - backend
 
+> NOTE: If you experience issues while starting the containerized application it is probably because the dependency for the frontend service are not installed properly. Run the following command to install the dependencies properly:
+
+```bash 
+docker run -v "$PWD"/frontend:/app node:18 npm install --save --prefix /app
+```
+
+> ONLY Windows users: change the "$PWD" to the absolute path of this repository (C://)
+
+
+
+
 ---
 ### 3. Cooperation
 
@@ -71,8 +98,14 @@ The members of project team are:
 - Phillip Lange
 
 ---
-### 4. Backend API Docs
+### 4. Backend 
+The backend is responsible for providing the frontend with information like ML-model names, training performance and model files. 
 
+#### 4.1 ML Process
+The ML process is documented in the following flow chart. It displays which steps are performed after the user selects a CSV file, a gold label and a selection of ML models in the frontend.
+
+![ML-process](./docs/ML-Process-flowchart.png)
+#### 4.2 API Docs
 List of Endpoints:
 
 /upload (POST) -> send the CSV data file from the frontend to the backend. Input: -
