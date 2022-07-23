@@ -55,8 +55,8 @@ def upload_file():
 @app.route("/start", methods=['POST'])
 def start_training():
     # TODO: delete this to fix the server side error 
-    content = json.dumps({"trained": ["tester"]})
-    return content
+    # content = json.dumps({"trained": ["tester"]})
+    # return content
 
     if request.method == 'POST':
         app.logger.info(os.listdir(UPLOAD_DIR))
