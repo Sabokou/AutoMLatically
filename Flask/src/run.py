@@ -72,7 +72,7 @@ def start_training():
         app.logger.info(f"Initial fits have ended. Optimizing best model now.")
         tuned_model = optimizer.hyperparameter_optimize_single(model_name=list(loader.best_model.keys())[0],
                                                                model=list(loader.best_model.values())[0],
-                                                               X=prepro.df.drop(goldLabel),
+                                                               X=prepro.df.drop(goldLabel, axis="columns", inplace=False),
                                                                y=prepro.df[goldLabel])
 
         # saves tuned model as best model
