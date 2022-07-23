@@ -3,6 +3,7 @@ from flask_cors import CORS
 import logging
 import os
 import json
+from joblib import dump, load
 
 PORT = 8001
 # save the uploaded file into this directory inside the container
@@ -71,8 +72,14 @@ def start_training():
         app.logger.info(f"Initial fits have ended. Optimizing best model now.")
         tuned_model = optimizer.hyperparameter_optimize_single(model_name=list(loader.best_model.keys())[0],
                                                                model=list(loader.best_model.values())[0],
-                                                               X=X,
-                                                               y=y)
+                                                               X=prepro.df.drop(goldLabel),
+                                                               y=prepro.df[goldLabel])
+
+        # takes all currently trained and loaded models and sorts them by performance
+        # takes all but the best model since it was tuned
+        for cnt_item, item in enumerate(sorted(loader.mae.items(), key=lambda x: x[1])[1:]):
+            dump(loader.models_dict.get(item[0]),
+                 os.path.join(DOWNLOAD_DIR, "model_" + str(cnt_item) + item[0] + '.joblib'))
 
         # content = json.loads(request.data)
         app.logger.info(f"{tuned_model}")
@@ -82,7 +89,6 @@ def start_training():
 @app.route("/performance", methods=['GET'])
 def get_performance():
     if request.method == 'GET':
-
         # Current performance values (mean absolute error) are stored in loader's mae attribute
         mae = loader.mae
 
