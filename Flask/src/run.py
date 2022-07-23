@@ -1,3 +1,5 @@
+from ml_framework.Preprocessing import Preprocessing
+from ml_framework.ModelLoader import ModelLoader
 from flask import Flask, request, send_file, Response
 from flask_cors import CORS
 import logging
@@ -20,7 +22,8 @@ prepro = Preprocessing()
 optimizer = ModelOptimizer()
 
 app = Flask(__name__)
-CORS(app)
+
+CORS(app, expose_headers=["Content-Disposition"])
 
 # config
 app.config['UPLOAD_FOLDER'] = "."
@@ -51,6 +54,10 @@ def upload_file():
 
 @app.route("/start", methods=['POST'])
 def start_training():
+    # TODO: delete this to fix the server side error 
+    content = json.dumps({"trained": ["tester"]})
+    return content
+
     if request.method == 'POST':
         app.logger.info(os.listdir(UPLOAD_DIR))
         # TODO: load the selected models
@@ -62,10 +69,12 @@ def start_training():
 
         # preprocess data
         # lin_data = prepro.linear_preprocessing()
-        (X_train, X_test, y_train, y_test) = prepro.train_test_splitter(prepro.df, y_name=goldLabel)
+        (X_train, X_test, y_train, y_test) = prepro.train_test_splitter(
+            prepro.df, y_name=goldLabel)
 
         loader.load(model_names=models)
         loader.fit(X_train, y_train)
+        app.logger.info(f"Y: {y_test}")
         loader.predict(X_test, y_test)
 
         # get best Model for hyperparameter tuning
@@ -76,12 +85,12 @@ def start_training():
                                                                y=prepro.df[goldLabel])
 
         # saves tuned model as best model
-        dump(tuned_model, os.path.join(DOWNLOAD_DIR, "1_" + list(loader.best_model.keys())[0] + ".joblib"))
+        dump(tuned_model, os.path.join(DOWNLOAD_DIR, "0_" + list(loader.best_model.keys())[0] + ".joblib"))
         # takes all currently trained and loaded models and sorts them by performance
         # takes all but the best model since it was tuned
         for cnt_item, item in enumerate(sorted(loader.mae.items(), key=lambda x: x[1])[1:]):
             dump(loader.models_dict.get(item[0]),
-                 os.path.join(DOWNLOAD_DIR, str(cnt_item+2) + "_" + item[0] + '.joblib'))
+                 os.path.join(DOWNLOAD_DIR, str(cnt_item+1) + "_" + item[0] + '.joblib'))
 
         # content = json.loads(request.data)
         app.logger.info(f"{tuned_model}")
@@ -94,7 +103,8 @@ def get_performance():
         # Current performance values (mean absolute error) are stored in loader's mae attribute
         mae = loader.mae
 
-        app.logger.info(f"You want to GET the /performance parameters\n. Current values:\n{mae}")
+        app.logger.info(
+            f"You want to GET the /performance parameters\n. Current values:\n{mae}")
         content = json.dumps({"nlpregressor": "0.1234"})
         return suc(mae)
         # return suc(f"Your dummy performance is: {content}")
@@ -112,15 +122,28 @@ def get_model_names():
 
 @app.route("/download", methods=['GET', 'DELETE'])
 def get_trained_models():
+    """
+    Accepted input to the GET method:
+    {
+        "model": "<name of model with underscores>",
+        "top": <boolean>
+    }
+    If top is true the best model is downloaded.
+    """
     if request.method == 'GET':
         requested_model = None
         try:
-            content = json.loads(request.data)
-            app.logger.info(f"You want to GET model {content}")
-            requested_model = content["model"]
-            app.logger.info(f"You want to request the model {requested_model}")
+            app.logger.info(request.args)
+            content = request.args
+            #app.logger.info(f"You want to GET model {content}")
+            if "model" in content:
+                requested_model = content["model"]  
+            elif "top" in content:
+                requested_model = True
+            app.logger.info(
+                f"You want to request the model {requested_model}. If this sais true you get the best model.")
         except:
-            return "The request is maleformed, make sure to format like this: { 'model': <model_name> }"
+            return "The request is maleformed, make sure to format like this: { 'model': <model_name> } or {'top': true}"
 
         # search through the download dir for the requested saved model
         is_dir = os.path.exists(DOWNLOAD_DIR)
@@ -128,17 +151,47 @@ def get_trained_models():
         if not is_dir:
             return f"Since the server container doesn't contain the folder '{DOWNLOAD_DIR}', there are no saved trained models, yet."
 
+        # search through the saved files and store the file name without extension and path
+        model_files = []
         for root, dirs, files in os.walk(DOWNLOAD_DIR):
             app.logger.info(f"Searching through files: {files}")
             for file in files:
-                if file.startswith(requested_model):
-                    app.logger.info(f"checking file {file}")
-                    model_path = os.path.join(root, file)
-                    app.logger.info(model_path)
-                    return send_file(model_path, as_attachment=True)
-            return "Did not find the selected model"
+                # remove the file extension
+                name = file.split(".")[0]
+                # absolute path to the file
+                model_path = os.path.join(root, file)
+                model_files.append( {"name": name, "name_full": file, "path": model_path} )
 
-    # remove all previously stored trained models 
+        # if a specific model name is provided send the model file that ends with that name 
+        if isinstance(requested_model, str):
+            for model_file in model_files:
+                if model_file["name"].endswith(requested_model):
+                    return send_file(model_file["path"], as_attachment=True, download_name=model_file["name_full"])
+            return f"Could not find a model with the name '{requested_model}'"
+
+        # if requested_model is "True" the best model (starting with 0) is sent
+        elif isinstance(requested_model, bool) and requested_model:
+            for model_file in model_files:
+                if model_file["name"].startswith("0"):
+                    return send_file(model_file["path"], as_attachment=True, download_name=model_file["name_full"])
+            return "Could not find the best model which starts with '0'"
+
+
+            # for root, dirs, files in os.walk(DOWNLOAD_DIR):
+            #     app.logger.info(f"Searching through files: {files}")
+            #     for file in files:
+            #         # remove the file extension
+            #         f_name = file.split(".")[0]
+            #         # search for model by name
+            #         if f_name.endswith(requested_model) and f_name.startswith("0"):
+            #             app.logger.info(f"checking file {file}")
+            #             model_path = os.path.join(root, file)
+            #             app.logger.info(model_path)
+            #             return send_file(model_path, as_attachment=True)
+            #     return "Did not find the selected model"
+
+
+    # remove all previously stored trained models
     elif request.method == 'DELETE':
         if os.path.exists(DOWNLOAD_DIR):
             # might fail if the folder exists but is empty

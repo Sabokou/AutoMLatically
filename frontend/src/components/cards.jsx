@@ -8,6 +8,7 @@ import { FileUploader } from "./fileUploader";
 import CsvPreview from "./CsvPreview";
 import ModelSelector from "./ModelSelector";
 import RequestModels from "./RequestModels";
+import ModelDownloader from "./ModelDownloader";
 
 export default function Cards(props) {
   const backendUrl = "http://localhost:8001"
@@ -19,6 +20,8 @@ export default function Cards(props) {
   const [selectedModels, setSelectedModels] = useState([])
   // maps the state of the regression/classification switch to the respective string
   const mlKindMap = { true: "regression", false: "classification" }
+  // after the training the names of the trained models are saved in here
+  const [trainedModels, setTrainedModels] = useState()
 
   // request the available ML models and the respective kind (regression/classification) from the backend
   var availModels = RequestModels()
@@ -48,16 +51,18 @@ export default function Cards(props) {
       var trainingParams = {selectedModels: selectedModels, gold_label: goldLabel}
 
       // requests to the backend
-      const deletePrevModels = axios.delete(`${backendUrl}/download`)
+      //const deletePrevModels = axios.delete(`${backendUrl}/download`)
       const training = axios.post(`${backendUrl}/start`, trainingParams)
       
       // sending both requests 
-      deletePrevModels.then((cb) => {
-        console.log('callback of the deletion step', cb)
-        })
+      // TODO: Comment in again after troubleshooting
+      // deletePrevModels.then((cb) => {
+      //   console.log('callback of the deletion step', cb)
+      //   })
       
       training.then( (cb) => {
         console.log('cb of the training process', cb)
+        setTrainedModels(["test", "best_test_model"])
       })
     }
   }
@@ -97,6 +102,9 @@ export default function Cards(props) {
           <button className="button" onClick={() => startTraining()}>
             <span>Go!</span>
           </button>
+
+          { trainedModels && <ModelDownloader availModels={trainedModels} backendUrl={backendUrl} /> }
+
         </div>
       </div>
       <div className="cardContainer box4"></div>
