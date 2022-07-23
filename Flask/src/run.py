@@ -76,12 +76,12 @@ def start_training():
                                                                y=prepro.df[goldLabel])
 
         # saves tuned model as best model
-        dump(tuned_model, os.path.join(DOWNLOAD_DIR, "model_1_" + list(loader.best_model.keys())[0] + ".joblib"))
+        dump(tuned_model, os.path.join(DOWNLOAD_DIR, "1_" + list(loader.best_model.keys())[0] + ".joblib"))
         # takes all currently trained and loaded models and sorts them by performance
         # takes all but the best model since it was tuned
         for cnt_item, item in enumerate(sorted(loader.mae.items(), key=lambda x: x[1])[1:]):
             dump(loader.models_dict.get(item[0]),
-                 os.path.join(DOWNLOAD_DIR, "model_" + str(cnt_item+2) + "_" + item[0] + '.joblib'))
+                 os.path.join(DOWNLOAD_DIR, str(cnt_item+2) + "_" + item[0] + '.joblib'))
 
         # content = json.loads(request.data)
         app.logger.info(f"{tuned_model}")
