@@ -60,9 +60,12 @@ export default function Cards(props) {
       //   console.log('callback of the deletion step', cb)
       //   })
       
-      training.then( (cb) => {
-        console.log('cb of the training process', cb)
-        setTrainedModels(["test", "best_test_model"])
+      training.then( (response) => {
+        try {  
+          console.log('cb of the training process', response)
+          var availTrainModels = response.data["trained"]
+          setTrainedModels(availTrainModels)
+        } catch { console.log("Could not retrieve the name of the trained models from the /training endpoint repsonse.")}
       })
     }
   }
