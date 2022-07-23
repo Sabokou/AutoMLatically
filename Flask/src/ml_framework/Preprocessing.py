@@ -29,9 +29,9 @@ class Preprocessing:
         assert type(test_size) == float, f"Please provide a float value between 0 and 1. You provided: {test_size}"
 
         labels = df[y_name]
-        df.drop(y_name, axis="columns", inplace=True)
 
-        X_train, X_test, y_train, y_test = train_test_split(df, labels, test_size=test_size)
+        X_train, X_test, y_train, y_test = train_test_split(df.drop(y_name, axis="columns", inplace=False),
+                                                            labels, test_size=test_size)
 
         return X_train, X_test, y_train, y_test
 

@@ -129,11 +129,12 @@ class ModelLoader:
             self.models_dict[model] = self.models_dict[model].fit(X, y)
 
     @staticmethod
-    @np.vectorize
+    # @np.vectorize
     def _calc_mae(y, pred):
         y, pred = np.array(y), np.array(pred)
         abs = np.abs(y - pred)
-        return np.mean(abs)
+        mean = np.mean(abs)
+        return mean
 
     def select_best_model(self) -> None:
         """Reads the self.mae dict and stores the model with the lowest score to self.best_model."""
@@ -141,6 +142,7 @@ class ModelLoader:
         currently_best_perf = np.inf
 
         for item in self.mae.items():
+            print("This is the item",item)
             # item tuple = (model_name, model_performance)
             if item[1] < currently_best_perf:
                 currently_best_perf = item[1]
@@ -163,7 +165,9 @@ class ModelLoader:
 
         if y is not None:
             for model, prediction in predictions.items():
-                self.mae[model] = self._calc_mae(y, prediction)
+                mean = self._calc_mae(y, prediction)
+                print(f"In predict: {model} has mean of {mean}")
+                self.mae[model] = mean
             self.select_best_model()
 
         return predictions
