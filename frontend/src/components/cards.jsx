@@ -97,13 +97,9 @@ export default function Cards(props) {
 
     // set the name of the performance measure depending on the mlKind
     var yLabel
-    // true: regression, false: classification
+    
     console.log('mlKind', mlKind)
-    if (mlKind === true) {
-      yLabel = "R2 Score"
-    } else {
-      yLabel = "Accuracy"
-    }
+
     // chart for performance measurement
     var option = {
       xAxis: {
@@ -112,7 +108,8 @@ export default function Cards(props) {
       },
       yAxis: {
         type: 'value',
-        name: yLabel,
+        // true: regression, false: classification
+        name: mlKind ? "R2 Score" : "Accuracy",
         nameLocation: 'middle',
         nameGap: 40
       },
