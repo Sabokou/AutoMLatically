@@ -55,7 +55,7 @@ class ModelLoader:
         # model_dict will contain the name of the models as key and the model objects as values
         self.models_dict = {}
         # contains the mean absolut error if it should be calculated during model prediction
-        self.mae = {}
+        self.scores = {}
         self.load(models)
 
     def get_available(self, task: str = None):
@@ -78,7 +78,7 @@ class ModelLoader:
 
     def reset(self) -> None:
         self.models_dict = {}
-        self.mae = {}
+        self.scores = {}
         self.best_model = None
 
     def load(self, model_names=None, task=None) -> None:
@@ -113,22 +113,22 @@ class ModelLoader:
                     linear_preprocessor, LinearRegression())
             if name in ["sgd_regressor", "sgdregressor"]:
                 self.models_dict["sgd_regressor"] = make_pipeline(
-                   linear_preprocessor, SGDRegressor())
+                    linear_preprocessor, SGDRegressor())
             if name in ["mlp_regressor", "mlpregressor"]:
                 self.models_dict["mlp_regressor"] = make_pipeline(
-                   linear_preprocessor, MLPRegressor())
+                    linear_preprocessor, MLPRegressor())
             if name in ["random_forest_regressor", "randomforestregressor"]:
                 self.models_dict["random_forest_regressor"] = make_pipeline(
-                   tree_preprocessor, RandomForestRegressor())
+                    tree_preprocessor, RandomForestRegressor())
             # classification
             if name in ["linear_svc", "linearsvc"]:  # linear support vector classification
                 self.models_dict["linear_svc"] = make_pipeline(linear_preprocessor, LinearSVC())
             if name in ["random_forest_classifier", "randomforestclassifier"]:
                 self.models_dict["random_forest_classifier"] = make_pipeline(
-                   tree_preprocessor, RandomForestClassifier())
+                    tree_preprocessor, RandomForestClassifier())
             if name in ["k_neighbors_classifier", "kneighborsclassifier"]:
                 self.models_dict["k_neighbors_classifier"] = make_pipeline(
-                   linear_preprocessor, KNeighborsClassifier())
+                    linear_preprocessor, KNeighborsClassifier())
 
     def fit(self, X, y) -> None:
         """Fit the training data X and the respective gold labels y to train all selected models in the ModelLoader."""
@@ -146,15 +146,15 @@ class ModelLoader:
     def select_best_model(self) -> None:
         """Reads the self.mae dict and stores the model with the lowest score to self.best_model."""
         currently_best_model = None
-        currently_best_perf = np.inf
+        currently_best_perf = -np.inf
 
-        for model_name, model_performance in self.mae.items():
+        for model_name, model_performance in self.scores.items():
             # item tuple = (model_name, model_performance)
-            if model_performance < currently_best_perf:
+            if model_performance > currently_best_perf:
                 currently_best_perf = model_performance
                 currently_best_model = model_name
 
-        self.best_model = {currently_best_model:self.models_dict[currently_best_model]}
+        self.best_model = {currently_best_model: self.models_dict[currently_best_model]}
 
     def predict(self, X, y=None) -> dict:
         """Use all loaded models in the ModelLoader to make predictions for the test data X.
@@ -167,13 +167,13 @@ class ModelLoader:
         # initialize a dictionary with the model names and an empty list that is filled with the predictions
         predictions = {}
         for model in self.models_dict:
-            predictions[model] = self.models_dict[model].predict(X)
-
-        if y is not None:
-            for model, prediction in predictions.items():
-                mean = self._calc_mae(y, prediction)
-                print(f"In predict: {model} has mean of {mean}")
-                self.mae[model] = mean
-            self.select_best_model()
+            self.scores[model] = self.models_dict[model].score(X, y)
+        #
+        # if y is not None:
+        #     for model, prediction in predictions.items():
+        #         mean = self._calc_mae(y, prediction)
+        #         print(f"In predict: {model} has mean of {mean}")
+        #         self.scores[model] = mean
+        self.select_best_model()
 
         return predictions

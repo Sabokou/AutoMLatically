@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.compose import make_column_selector
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.preprocessing import RobustScaler
 from sklearn.compose import make_column_transformer
 from sklearn.impute import SimpleImputer
@@ -40,7 +40,7 @@ class Preprocessing:
     def linear_preprocessing():
         linear_processor_categorical = OneHotEncoder(handle_unknown="ignore")
         linear_processor_numerical = make_pipeline(
-            RobustScaler(),
+            StandardScaler(),
             SimpleImputer(strategy="mean", add_indicator=True)
         )
 

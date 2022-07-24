@@ -78,22 +78,27 @@ def start_training():
         loader.predict(X_test, y_test)
 
         # get best Model for hyperparameter tuning
-        app.logger.info(f"Initial fits have ended. Optimizing best model now.")
+        app.logger.info(f"Initial fits have ended. Optimizing best model {list(loader.best_model.keys())[0]} now.")
         tuned_model = optimizer.hyperparameter_optimize_single(model_name=list(loader.best_model.keys())[0],
                                                                model=list(loader.best_model.values())[0],
                                                                X=prepro.df.drop(goldLabel, axis="columns", inplace=False),
                                                                y=prepro.df[goldLabel])
 
+        # Add score of finetuned model to score dict
+        score = tuned_model.score(X_test, y_test)
+        loader.scores["Fine-tuned " + list(loader.best_model.keys())[0]] = score
+
         # saves tuned model as best model
         dump(tuned_model, os.path.join(DOWNLOAD_DIR, "0_" + list(loader.best_model.keys())[0] + ".joblib"))
         # takes all currently trained and loaded models and sorts them by performance
         # takes all but the best model since it was tuned
-        for cnt_item, item in enumerate(sorted(loader.mae.items(), key=lambda x: x[1])[1:]):
+        for cnt_item, item in enumerate(sorted(loader.scores.items(), key=lambda x: x[1])[1:]):
             dump(loader.models_dict.get(item[0]),
                  os.path.join(DOWNLOAD_DIR, str(cnt_item+1) + "_" + item[0] + '.joblib'))
 
         # content = json.loads(request.data)
-        app.logger.info(f"{tuned_model}")
+        app.logger.info(f"{'Fine-tuned ' + list(loader.best_model.keys())[0]} with {tuned_model.get_params} achieved"
+                        f" score of {score}")
         
         # send the names of the available trained models to the frontend
         resp = {"trained": list(loader.models_dict.keys())}
@@ -105,13 +110,16 @@ def start_training():
 def get_performance():
     if request.method == 'GET':
         # Current performance values (mean absolute error) are stored in loader's mae attribute
-        mae = loader.mae
+        scores = loader.scores
+
+        # format model names to be more visually pleasing
+        scores = {value[0].replace("_", " "): round(value[1], 3) for value in list(scores.items())}
 
         app.logger.info(
-            f"You want to GET the /performance parameters\n. Current values:\n{mae}")
-        content = json.dumps({"nlpregressor": "0.1234"})
-        return mae
-        # return suc(f"Your dummy performance is: {content}")
+            f"You want to GET the /performance parameters\n. Current values:\n{scores}")
+
+        return scores
+
 
 
 @app.route("/model-names", methods=['GET'])

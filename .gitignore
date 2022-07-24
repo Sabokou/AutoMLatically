@@ -130,3 +130,5 @@ dmypy.json
 
 
 */node_modules/*
+Flask/src/trained_models/
+Flask/src/uploaded_file/
