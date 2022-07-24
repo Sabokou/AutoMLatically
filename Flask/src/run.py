@@ -86,22 +86,29 @@ def start_training():
 
         # Add score of finetuned model to score dict
         score = tuned_model.score(X_test, y_test)
-        loader.scores["Fine-tuned " + list(loader.best_model.keys())[0]] = score
+        fine_tuned_model_name = "fine-tuned_" + list(loader.best_model.keys())[0]
+        loader.scores[fine_tuned_model_name] = score
 
         # saves tuned model as best model
-        dump(tuned_model, os.path.join(DOWNLOAD_DIR, "0_" + list(loader.best_model.keys())[0] + ".joblib"))
+        #dump(tuned_model, os.path.join(DOWNLOAD_DIR, fine_tuned_model_name + ".joblib"))
+        
         # takes all currently trained and loaded models and sorts them by performance
         # takes all but the best model since it was tuned
-        for cnt_item, item in enumerate(sorted(loader.scores.items(), key=lambda x: x[1])[1:]):
+        model_names = []
+        models_performance = sorted(loader.scores.items(), key=lambda x: x[1], reverse=True)
+        for cnt_item, item in enumerate(models_performance):
+            model_name = str(cnt_item) + "_" + item[0]
+            model_names.append(model_name)
             dump(loader.models_dict.get(item[0]),
-                 os.path.join(DOWNLOAD_DIR, str(cnt_item+1) + "_" + item[0] + '.joblib'))
+                 os.path.join(DOWNLOAD_DIR, model_name + '.joblib'))
 
         # content = json.loads(request.data)
         app.logger.info(f"{'Fine-tuned ' + list(loader.best_model.keys())[0]} with {tuned_model.get_params} achieved"
                         f" score of {score}")
+        app.logger.info(f"Model names: {model_names}")
         
         # send the names of the available trained models to the frontend
-        resp = {"trained": list(loader.models_dict.keys())}
+        resp = {"trained": model_names}
         app.logger.info(f"Response to the frontend: {resp}")
         return resp
 
@@ -109,11 +116,10 @@ def start_training():
 @app.route("/performance", methods=['GET'])
 def get_performance():
     if request.method == 'GET':
-        # Current performance values (mean absolute error) are stored in loader's mae attribute
-        scores = loader.scores
-
+        # Current performance values stored in loader sorted by score
+        models_performance = sorted(loader.scores.items(), key=lambda x: x[1], reverse=True)
         # format model names to be more visually pleasing
-        scores = {value[0].replace("_", " "): round(value[1], 3) for value in list(scores.items())}
+        scores = {value[0].replace("_", " "): round(value[1], 3) for value in models_performance}
 
         app.logger.info(
             f"You want to GET the /performance parameters\n. Current values:\n{scores}")
