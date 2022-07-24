@@ -1,9 +1,10 @@
 .check-list {
-    color: white;
+    color: black;
 }
 
 .model-selector-title {
     font-size: x-large;
+    color: black;
 }
 
 .list-container input {

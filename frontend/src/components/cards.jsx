@@ -177,7 +177,7 @@ export default function Cards(props) {
       <p className="cardContainer header3">Performance Measurements</p>
         {
         typeof echartOptions === 'undefined' && (
-        <div style={{color: "white"}}> The perfromance of the models is displayed after the training is completed. </div>)
+        <div style={{color: "black"}}> The perfromance of the models is displayed after the training is completed. </div>)
         }
         {
         echartOptions && (

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import CsvLoader from "./CsvLoader";
+import "./fileUploader.css"
 
 export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
   const [file, setFile] = useState();
@@ -29,7 +30,7 @@ export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
   return (
     // Upload form
     <form className="m-3" method="post" action="#" id="#" onSubmit={submit}>
-      <label className="mx-3" style={{color: "white"}}>Choose file: </label>
+      <label className="mx-3" style={{color: "black"}}>Choose file: </label>
       <input
         className="form-control"
         type="file"
@@ -37,7 +38,10 @@ export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
         multiple=""
         accept=".csv"
       />
-      <button className="btn btn-light btn-outline-primary">Upload</button>
+      {/* <button className="btn btn-light btn-outline-primary">Upload</button> */}
+      <button className="upload-button" type="submit">
+            <span>Upload</span>
+      </button>
     </form>
   );
 };

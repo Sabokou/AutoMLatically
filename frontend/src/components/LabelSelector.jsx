@@ -14,7 +14,7 @@ export default function Selector(props) {
     <div className="content">
       {/* This code with the column dropdown can be used for the gold label selection in a card */}
       {
-        !doColsExist && <div style={{color: "white", justifySelf: "center"}}>Upload a CSV file to see it's labels.</div>
+        !doColsExist && <div style={{color: "black", justifySelf: "center"}}>Upload a CSV file to see it's labels.</div>
       }
       {
         // Dropdown to select gold-label

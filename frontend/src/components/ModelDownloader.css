@@ -18,7 +18,8 @@
 }
 
 .download:hover {
-    background-color: #0d6efd;
+    background-color: #7577BE;
+    color: white;
 }
 
 .fill {
@@ -27,7 +28,7 @@
 
 .downloadTitle {
     text-align: center;
-    color: white;
+    color: black;
     font-size: large;
 }
 

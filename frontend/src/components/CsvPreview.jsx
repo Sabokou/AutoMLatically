@@ -75,7 +75,7 @@ function CsvPreview({ column_data, row_data }) {
 
   return (
     <div>
-      <div style={{color: "white", marginLeft: "15px"}}>Preview of up to 100 rows of the dataset:</div>
+      <div style={{color: "black", marginLeft: "15px"}}>Preview of up to 100 rows of the dataset:</div>
       <div style={{height: '30vh', width: "auto", backgroundColor: "white", borderRadius: "15px", margin: "15px", overflow: 'auto'}}>
           <Table columns={columns} data={rows} />
       </div>
