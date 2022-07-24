@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.metrics import mean_absolute_error
 
 # regression
 from sklearn.linear_model import LinearRegression, SGDRegressor
@@ -75,9 +76,15 @@ class ModelLoader:
             print(f"Could not find {task}. Available options are: {self._available_models.keys()}")
             return
 
-    def load(self, model_names=None, task=None) -> None:
-        # reset previous model_dict to load new models
+    def reset(self) -> None:
         self.models_dict = {}
+        self.mae = {}
+        self.best_model = None
+
+    def load(self, model_names=None, task=None) -> None:
+
+        # reset previous model_dict and other artifacts from previous runs
+        self.reset()
 
         # override the previous task if a task is provided
         if task is not None:
@@ -141,12 +148,11 @@ class ModelLoader:
         currently_best_model = None
         currently_best_perf = np.inf
 
-        for item in self.mae.items():
-            print("This is the item",item)
+        for model_name, model_performance in self.mae.items():
             # item tuple = (model_name, model_performance)
-            if item[1] < currently_best_perf:
-                currently_best_perf = item[1]
-                currently_best_model = item[0]
+            if model_performance < currently_best_perf:
+                currently_best_perf = model_performance
+                currently_best_model = model_name
 
         self.best_model = {currently_best_model:self.models_dict[currently_best_model]}
 

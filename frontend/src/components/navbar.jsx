@@ -13,7 +13,7 @@ const NavbarBar = (props) => {
       <a className="navbar-brand" href="#">
         AutoMLatically - The powerful Tool for your Machine Learning Use-Case
       </a>
-      <button
+      {/* <button
         className="navbar-toggler"
         type="button"
         data-toggle="collapse"
@@ -65,7 +65,7 @@ const NavbarBar = (props) => {
             </div>
           </li>
         </ul>
-      </div>
+      </div> */}
     </nav>
   );
 }

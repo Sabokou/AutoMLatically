@@ -20,12 +20,13 @@ class Preprocessing:
         self.df = pd.read_csv(data_path)
 
     @staticmethod
-    def train_test_splitter(df, y_name, test_size=0.2):
+    def train_test_splitter(df, y_name: str, test_size: float =0.2):
         """
         Takes in the dataframe that should be transformed, the column name that is considered the gold label in the training process.
         The size for the train test split in percent can optionally be set to other values besides 80/20 train/test split.
         """
-        assert y_name in df.columns, f"The label column '{y_name}' is not in the dataframe columns: {df.columns}"
+        columns = [col for col in df]
+        assert y_name in columns, f"The label column '{y_name}' is not in the dataframe columns: {columns}"
         assert type(test_size) == float, f"Please provide a float value between 0 and 1. You provided: {test_size}"
 
         labels = df[y_name]

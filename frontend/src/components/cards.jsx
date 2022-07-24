@@ -10,6 +10,8 @@ import ModelSelector from "./ModelSelector";
 import RequestModels from "./RequestModels";
 import ModelDownloader from "./ModelDownloader";
 
+import ReactECharts from 'echarts-for-react';
+
 export default function Cards(props) {
   const backendUrl = "http://localhost:8001"
 
@@ -18,6 +20,10 @@ export default function Cards(props) {
   const [csvRows, setCsvRows] = useState();
   const [mlKind, setMlKind] = useState("classification")
   const [selectedModels, setSelectedModels] = useState([])
+  const [performMeasurements, setPerformMeasurements] = useState()
+  // defines how the performance measurements are displayed
+  const [echartOptions, setEchartOptions] = useState()
+
   // maps the state of the regression/classification switch to the respective string
   const mlKindMap = { true: "regression", false: "classification" }
   // after the training the names of the trained models are saved in here
@@ -51,23 +57,64 @@ export default function Cards(props) {
       var trainingParams = {selectedModels: selectedModels, gold_label: goldLabel}
 
       // requests to the backend
-      //const deletePrevModels = axios.delete(`${backendUrl}/download`)
+      const deletePrevModels = axios.delete(`${backendUrl}/download`)
       const training = axios.post(`${backendUrl}/start`, trainingParams)
       
       // sending both requests 
-      // TODO: Comment in again after troubleshooting
-      // deletePrevModels.then((cb) => {
-      //   console.log('callback of the deletion step', cb)
-      //   })
+      deletePrevModels.then((cb) => {
+        console.log('callback of the deletion step', cb)
+        })
       
       training.then( (response) => {
         try {  
           console.log('cb of the training process', response)
           var availTrainModels = response.data["trained"]
           setTrainedModels(availTrainModels)
+          getModelPerformance()
         } catch { console.log("Could not retrieve the name of the trained models from the /training endpoint repsonse.")}
       })
     }
+  }
+
+  const getModelPerformance = () => {
+    axios
+      .get("http://localhost:8001/performance")
+      .then((e) => {
+        var keys = Object.keys(e.data)
+        var values = keys.map(function(key){
+          return e.data[key];
+        })
+        initPerformanceChart(keys, values)
+        //setPerformMeasurements(e.data)
+      })
+      .catch((e) => {
+        console.error("Receiving error", e);
+      })
+  }
+  const initPerformanceChart = (modelNames, performance) => {
+    console.log('modelNames', modelNames)
+    console.log('performance', performance)
+    // chart for performance measurement
+
+    var option = {
+      xAxis: {
+        type: 'category',
+        data: modelNames
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Mean Absolute Error',
+        nameLocation: 'middle',
+        nameGap: 30
+      },
+      series: [
+        {
+          data: performance,
+          type: 'bar'
+        }
+      ]
+    };
+    setEchartOptions(option)
   }
 
   return (
@@ -110,7 +157,18 @@ export default function Cards(props) {
 
         </div>
       </div>
-      <div className="cardContainer box4"></div>
+      <div className="cardContainer box4">
+      <p className="cardContainer header3">Performance Measurements</p>
+        {
+        typeof echartOptions === 'undefined' && (
+        <div style={{color: "white"}}> The perfromance of the models is displayed after the training is completed. </div>)
+        }
+        {
+        echartOptions && (
+        <ReactECharts className="chart" option={echartOptions} theme="light" />)
+      }
+
+      </div>
     </div>
   );
 }

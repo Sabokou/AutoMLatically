@@ -94,7 +94,11 @@ def start_training():
 
         # content = json.loads(request.data)
         app.logger.info(f"{tuned_model}")
-        return suc(f"Training has been completed")
+        
+        # send the names of the available trained models to the frontend
+        resp = {"trained": list(loader.models_dict.keys())}
+        app.logger.info(f"Response to the frontend: {resp}")
+        return resp
 
 
 @app.route("/performance", methods=['GET'])
@@ -106,7 +110,7 @@ def get_performance():
         app.logger.info(
             f"You want to GET the /performance parameters\n. Current values:\n{mae}")
         content = json.dumps({"nlpregressor": "0.1234"})
-        return suc(mae)
+        return mae
         # return suc(f"Your dummy performance is: {content}")
 
 
