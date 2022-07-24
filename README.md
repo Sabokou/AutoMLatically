@@ -1,6 +1,6 @@
 # AutoMLatically
 
-![Architecture](./docs/Architecture.png)
+![Architecture](./docs/Architecture-high-level.png)
 
 This project is concerned with the implementation of a Auto Machine Learning (AutoML) framework. 
 The software has a user-facing frontent (React Website) and a ML performing backend (Flask API server).
@@ -104,7 +104,7 @@ The backend is responsible for providing the frontend with information like ML-m
 #### 4.1 ML Process
 The ML process is documented in the following flow chart. It displays which steps are performed after the user selects a CSV file, a gold label and a selection of ML models in the frontend.
 
-![ML-process](./docs/ML-Process-flowchart.png)
+![ML-process](./docs/ML-Process-flowchart.drawio.png)
 #### 4.2 API Docs
 List of Endpoints:
 
@@ -119,3 +119,9 @@ List of Endpoints:
 /download (GET) -> download the specified trained ML model from the backend and send them to the frontend. Input: {model_name: e.g. "linear_regression" or "best"}
 
 Backend internal naming convention for trained ML model files: "ranking_nameOfModel" for example: "0_linear_regression" if the linear regression is the best (0) model performance
+
+### 5. Frontend and Backend Interaction
+
+The process flow throughout this project is visualized in the following picture.
+
+![process-flow](./docs/Process-Overview.drawio.png)
