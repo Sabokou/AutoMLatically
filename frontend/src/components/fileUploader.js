@@ -29,7 +29,7 @@ export const FileUploader = ({ setCsvColumns, setCsvRows }) => {
   return (
     // Upload form
     <form className="m-3" method="post" action="#" id="#" onSubmit={submit}>
-      <label className="mx-3">Choose file: </label>
+      <label className="mx-3" style={{color: "white"}}>Choose file: </label>
       <input
         className="form-control"
         type="file"

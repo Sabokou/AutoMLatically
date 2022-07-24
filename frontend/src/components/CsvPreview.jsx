@@ -19,7 +19,6 @@ function Table({ columns, data }) {
     // Render the UI for the bootstrap table according to this tutorial: https://codesandbox.io/s/o1pt2?file=/src/App.js
     return (
       <div>
-        <div>Preview of up to 100 rows of the dataset:</div>
       <BTable striped bordered hover size="sm" {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
@@ -75,8 +74,11 @@ function CsvPreview({ column_data, row_data }) {
     )
 
   return (
-    <div style={{height: '30vh', overflow: 'auto'}}>
-        <Table columns={columns} data={rows} />
+    <div>
+      <div style={{color: "white", marginLeft: "15px"}}>Preview of up to 100 rows of the dataset:</div>
+      <div style={{height: '30vh', width: "auto", backgroundColor: "white", borderRadius: "15px", margin: "15px", overflow: 'auto'}}>
+          <Table columns={columns} data={rows} />
+      </div>
     </div>
   )
 }
