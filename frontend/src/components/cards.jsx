@@ -94,8 +94,16 @@ export default function Cards(props) {
   const initPerformanceChart = (modelNames, performance) => {
     console.log('modelNames', modelNames)
     console.log('performance', performance)
-    // chart for performance measurement
 
+    // set the name of the performance measure depending on the mlKind
+    var yLabel
+    // true: regression, false: classification
+    if (mlKind) {
+      yLabel = "R2 Score"
+    } else {
+      yLabel = "Accuracy"
+    }
+    // chart for performance measurement
     var option = {
       xAxis: {
         type: 'category',
@@ -103,14 +111,22 @@ export default function Cards(props) {
       },
       yAxis: {
         type: 'value',
-        name: 'Mean Absolute Error',
+        name: yLabel,
         nameLocation: 'middle',
-        nameGap: 30
+        nameGap: 40
       },
       series: [
         {
           data: performance,
-          type: 'bar'
+          type: 'bar',
+          color: "lightgrey",
+          label: {
+            show: true,
+            textStyle: {
+              fontSize: 20,
+              color: "black"
+            }
+          }
         }
       ]
     };
@@ -126,6 +142,7 @@ export default function Cards(props) {
         {
           // table that displays the csv content
           csvColumns && (
+
             <CsvPreview column_data={csvColumns} row_data={csvRows} />
           )
         }
@@ -146,7 +163,8 @@ export default function Cards(props) {
         </div>
         <ModelSelector availModels={availModels} modelKind={mlKind} selectedModels={selectedModels} setSelectedModels={setSelectedModels} />
       </div>
-      <div className="cardContainer box3">
+      <div className="cardContainer box12">
+        
         <div className="switchBox3">
           <p className="cardContainer header3">Start Training</p>
           <button className="button" onClick={() => startTraining()}>
